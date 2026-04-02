@@ -1,126 +1,54 @@
-<!doctype html>
-<html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ELAYON CRS — Núcleo Experimental</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <title>ELAYON CRS</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-  <main class="app">
-    <header class="hero">
-      <div>
-        <p class="eyebrow">ELAYON CRS</p>
-        <h1>Núcleo Experimental de Captação Temporal</h1>
-        <p class="hero-text">
-          Captação de ritmos, silêncio, energia e eventos temporais da fala humana.
-          Esta interface é o laboratório do motor CRS.
-        </p>
-      </div>
-      <div class="hero-badge">v1 • áudio + tempo</div>
-    </header>
 
-    <section class="card session-meta">
-      <div class="meta-grid">
-        <label class="field">
-          <span>Identificação da sessão</span>
-          <input id="sessionLabel" type="text" placeholder="Ex.: baseline-paulo-001" />
-        </label>
+  <header>
+    <h1>ELAYON CRS</h1>
+    <p>Interface de análise temporal</p>
+  </header>
 
-        <label class="field">
-          <span>Participante</span>
-          <input id="participantName" type="text" placeholder="Ex.: Paulo Roberto Xavier Júnior" />
-        </label>
+  <main>
 
-        <label class="field">
-          <span>Contexto</span>
-          <input id="sessionContext" type="text" placeholder="Ex.: fala espontânea / leitura / protocolo" />
-        </label>
-      </div>
-    </section>
+    <section class="card">
+      <h2>Entrada</h2>
 
-    <section class="card controls">
-      <div class="controls-row">
-        <button id="startBtn" class="btn primary">Ativar microfone</button>
-        <button id="stopBtn" class="btn secondary" disabled>Encerrar sessão</button>
-        <button id="clearBtn" class="btn ghost">Limpar sessão</button>
-        <button id="exportBtn" class="btn ghost" disabled>Exportar JSON</button>
-      </div>
+      <input id="context" placeholder="Contexto..." />
 
-      <div class="status-grid">
-        <div><strong>Status:</strong> <span id="statusText">Aguardando</span></div>
-        <div><strong>Duração:</strong> <span id="durationText">00:00</span></div>
-        <div><strong>Frames:</strong> <span id="frameCount">0</span></div>
-        <div><strong>Eventos:</strong> <span id="eventCount">0</span></div>
-      </div>
+      <textarea id="transcript" placeholder="Transcrição ou observação"></textarea>
+
+      <button onclick="analyzeSession()">Analisar</button>
+
+      <p id="status">Inicializando...</p>
     </section>
 
     <section class="card">
-      <h2>Painel 1 — Energia temporal</h2>
-      <p class="hint">
-        Leitura contínua da energia do áudio. Picos, quedas e retomadas são dados.
-      </p>
-      <canvas id="waveCanvas" width="1200" height="280"></canvas>
-    </section>
-
-    <section class="grid-2">
-      <section class="card">
-        <h2>Painel 2 — Transcrição bruta</h2>
-        <p class="hint">
-          A fala aparece sem correção. Hesitação, repetição, travamento e reinício são mantidos.
-        </p>
-        <textarea id="transcriptBox" readonly placeholder="A transcrição viva da sessão aparecerá aqui..."></textarea>
-        <div class="inline-actions">
-          <button id="copyBtn" class="btn ghost">Copiar transcrição</button>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>Painel 3 — Métricas centrais</h2>
-        <div class="metrics">
-          <div class="metric"><span>Duração total</span><strong id="mDuration">0s</strong></div>
-          <div class="metric"><span>Energia média</span><strong id="mEnergy">0.0000</strong></div>
-          <div class="metric"><span>Silêncio estimado</span><strong id="mSilence">0%</strong></div>
-          <div class="metric"><span>Pausas curtas</span><strong id="mShortPauses">0</strong></div>
-          <div class="metric"><span>Pausas médias</span><strong id="mMediumPauses">0</strong></div>
-          <div class="metric"><span>Pausas longas</span><strong id="mLongPauses">0</strong></div>
-          <div class="metric"><span>Variabilidade</span><strong id="mVar">0.0000</strong></div>
-        </div>
-      </section>
-    </section>
-
-    <section class="grid-2">
-      <section class="card">
-        <h2>Painel 4 — Eventos temporais</h2>
-        <p class="hint">
-          Registro procedural da sessão: início de emissão, pausas, retomadas e pontos críticos.
-        </p>
-        <div id="eventsLog" class="events-log">
-          <div class="event-placeholder">Nenhum evento registrado ainda.</div>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>Painel 5 — Resumo técnico</h2>
-        <div id="sessionSummary" class="summary">
-          Inicie uma sessão para consolidar métricas e eventos.
-        </div>
-      </section>
+      <h2>Métricas</h2>
+      <p id="metrics">—</p>
     </section>
 
     <section class="card">
-      <h2>Painel 6 — Objeto da sessão</h2>
-      <p class="hint">
-        Estrutura procedural multimodal em formação. Aqui aparecerá o JSON vivo da sessão.
-      </p>
-      <pre id="sessionJson" class="json-box">{}</pre>
+      <h2>JSON</h2>
+      <textarea id="json"></textarea>
     </section>
 
-    <footer class="footer-note">
-      CRS = observar, medir, segmentar e exportar. Sem concluir por enquanto.
-    </footer>
+    <section class="card">
+      <h2>IA</h2>
+
+      <button onclick="generatePrompt()">Gerar Prompt</button>
+
+      <textarea id="prompt"></textarea>
+    </section>
+
   </main>
 
+  <script src="config.js"></script>
   <script src="app.js"></script>
+
 </body>
 </html>
